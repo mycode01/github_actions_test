@@ -23,11 +23,11 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml -DskipTests
     - name: Publish
-        uses: nogsantos/scp-deploy@master
-        with:
-          src: ./target/ping-0.0.1-SNAPSHOT.jar
-          host: ${{ secrets.DEV_HOST }}
-          remote: .
-          port: 22
-          user: ec2-user
-          key: ${{ secrets.DEV_PEM_KEYPAIR }}
+      uses: nogsantos/scp-deploy@master
+      with:
+        src: ./target/ping-0.0.1-SNAPSHOT.jar
+        host: ${{ secrets.DEV_HOST }}
+        remote: .
+        port: 22
+        user: ec2-user
+        key: ${{ secrets.DEV_PEM_KEYPAIR }}
