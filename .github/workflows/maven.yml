@@ -1,0 +1,54 @@
+
+name: Java CI with Maven
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+        cache: maven
+    - name: Build with Maven
+      run: mvn -B package --file pom.xml -DskipTests
+    - name: Stop application
+      uses: garygrossgarten/github-action-ssh@release
+      with:
+        command: kill -9 `pgrep -f ping-0.0.1-SNAPSHOT.jar`
+        host: ${{ secrets.DEV_HOST }}
+        username: ec2-user
+        privateKey: ${{ secrets.DEV_PEM_KEYPAIR}}
+      env:
+        CI: true
+    - name: Publish jar
+      uses: nogsantos/scp-deploy@master
+      with:
+        src: ./target/ping-0.0.1-SNAPSHOT.jar
+        host: ${{ secrets.DEV_HOST }}
+        remote: .
+        port: 22
+        user: ec2-user
+        key: ${{ secrets.DEV_PEM_KEYPAIR }}
+    
+    - name: Start application
+      uses: appleboy/ssh-action@dce9d565de8d876c11d93fa4fe677c0285a66d78
+      with:
+        host: ${{ secrets.DEV_HOST }}
+        port: 22
+        username: ec2-user
+        key: ${{ secrets.DEV_PEM_KEYPAIR }}
+        script: |
+            chmod 755 ping-0.0.1-SNAPSHOT.jar
+            nohup java -jar ping-0.0.1-SNAPSHOT.jar > /dev/null &
+            whoami
