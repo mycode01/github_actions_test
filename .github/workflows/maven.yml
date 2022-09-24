@@ -31,7 +31,7 @@ jobs:
       with:
         host: ${{ secrets.DEV_HOST }}
         port: 22
-        username: ec2
+        username: ec2-user
         key: ${{ secrets.DEV_PEM_KEYPAIR }}
         script: |
             whoami
