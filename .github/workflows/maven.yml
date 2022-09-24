@@ -22,7 +22,16 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B package --file pom.xml -DskipTests
-    - name: Publish
+    - name: Stop application
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.DEV_HOST }}
+        port: 22
+        username: ec2-user
+        key: ${{ secrets.DEV_PEM_KEYPAIR }}
+        script: |
+            kill -9 `pgrep -f ping-0.0.1-SNAPSHOT.jar`
+    - name: Publish jar
       uses: nogsantos/scp-deploy@master
       with:
         src: ./target/ping-0.0.1-SNAPSHOT.jar
@@ -31,3 +40,13 @@ jobs:
         port: 22
         user: ec2-user
         key: ${{ secrets.DEV_PEM_KEYPAIR }}
+    - name: Start application
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.DEV_HOST }}
+        port: 22
+        username: ec2-user
+        key: ${{ secrets.DEV_PEM_KEYPAIR }}
+        script: |
+            chmod 755 ping-0.0.1-SNAPSHOT.jar
+            nohup java -jar ping-0.0.1-SNAPSHOT.jar > /dev/null &
