@@ -1,5 +1,6 @@
 package com.example.ping;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,8 +14,11 @@ public class PingApplication {
 		SpringApplication.run(PingApplication.class, args);
 	}
 
+	@Value("${app.msg}")
+	private String msg;
+
 	@GetMapping("/ping")
 	public String ping(){
-		return "pong";
+		return msg;
 	}
 }
