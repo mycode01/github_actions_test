@@ -31,6 +31,7 @@ jobs:
         key: ${{ secrets.DEV_PEM_KEYPAIR }}
         script: |
             kill -9 `pgrep -f ping-0.0.1-SNAPSHOT.jar`
+            whoami
     - name: Publish jar
       uses: nogsantos/scp-deploy@master
       with:
@@ -50,3 +51,4 @@ jobs:
         script: |
             chmod 755 ping-0.0.1-SNAPSHOT.jar
             nohup java -jar ping-0.0.1-SNAPSHOT.jar > /dev/null &
+            whoami
