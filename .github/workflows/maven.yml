@@ -20,6 +20,10 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: maven
+    - name: replace config string
+      run: sed -i '' "s/somemsgstring/HELLo world/g" src/main/resources/application-prod.properties 
+      run: sed -i '' "s/HELLo world/hello world!/g" src/main/resources/application-prod.properties 
+
     - name: Build with Maven
       run: mvn -B package --file pom.xml -DskipTests
     - name: Stop application
@@ -40,7 +44,6 @@ jobs:
         port: 22
         user: ec2-user
         key: ${{ secrets.DEV_PEM_KEYPAIR }}
-    
     - name: Start application
       uses: appleboy/ssh-action@dce9d565de8d876c11d93fa4fe677c0285a66d78
       with:
@@ -50,5 +53,4 @@ jobs:
         key: ${{ secrets.DEV_PEM_KEYPAIR }}
         script: |
             chmod 755 ping-0.0.1-SNAPSHOT.jar
-            nohup java -jar ping-0.0.1-SNAPSHOT.jar > /dev/null &
-            whoami
+            nohup java -jar ping-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod > /dev/null &
