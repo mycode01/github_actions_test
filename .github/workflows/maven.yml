@@ -23,7 +23,7 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml -DskipTests
     - name: Stop application
-      uses: appleboy/ssh-action@master
+      uses: appleboy/ssh-action@dce9d565de8d876c11d93fa4fe677c0285a66d78
       with:
         host: ${{ secrets.DEV_HOST }}
         port: 22
@@ -42,7 +42,7 @@ jobs:
         user: ec2-user
         key: ${{ secrets.DEV_PEM_KEYPAIR }}
     - name: Start application
-      uses: appleboy/ssh-action@master
+      uses: appleboy/ssh-action@dce9d565de8d876c11d93fa4fe677c0285a66d78
       with:
         host: ${{ secrets.DEV_HOST }}
         port: 22
