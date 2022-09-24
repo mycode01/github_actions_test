@@ -29,6 +29,8 @@ jobs:
         port: 22
         username: ec2-user
         key: ${{ secrets.DEV_PEM_KEYPAIR }}
+        script_stop: true
+        debug: true
         script: |
             whoami
             kill -9 `ps -ef|grep ping-0.0.1-SNAPSHOT.jar|awk '{print $2}'`
