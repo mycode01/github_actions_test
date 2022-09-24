@@ -23,16 +23,14 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml -DskipTests
     - name: Stop application
-      uses: appleboy/ssh-action@dce9d565de8d876c11d93fa4fe677c0285a66d78
-      with:
-        host: ${{ secrets.DEV_HOST }}
-        port: 22
-        username: ec2-user
-        key: ${{ secrets.DEV_PEM_KEYPAIR }}
-        script_stop: false
-        script: |
-            whoami
-            kill -9 `ps -ef|grep ping-0.0.1-SNAPSHOT.jar|awk '{print $2}'`
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: kill -9 `pgrep -f ping-0.0.1-SNAPSHOT.jar`
+          host: ${{ secrets.DEV_HOST }}
+          username: ec2-user
+          privateKey: ${{ secrets.DEV_PEM_KEYPAIR}}
+        env:
+          CI: true
     - name: Publish jar
       uses: nogsantos/scp-deploy@master
       with:
@@ -42,6 +40,7 @@ jobs:
         port: 22
         user: ec2-user
         key: ${{ secrets.DEV_PEM_KEYPAIR }}
+    
     - name: Start application
       uses: appleboy/ssh-action@dce9d565de8d876c11d93fa4fe677c0285a66d78
       with:
