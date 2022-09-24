@@ -22,8 +22,8 @@ jobs:
         cache: maven
     - name: replace config string
       run: |
-      sed -i '' "s/somemsgstring/HELLo world/g" src/main/resources/application-prod.properties 
-      sed -i '' "s/HELLo world/hello world!/g" src/main/resources/application-prod.properties 
+          sed -i '' "s/somemsgstring/HELLo world/g" src/main/resources/application-prod.properties 
+          sed -i '' "s/HELLo world/hello world!/g" src/main/resources/application-prod.properties 
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml -DskipTests
